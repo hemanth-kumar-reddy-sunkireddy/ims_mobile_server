@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 var cas = new CASAuthentication({
   cas_url: "https://login.iiit.ac.in/cas",
-  service_url: "/login",
+  service_url: "https://test-node-js-deploy.onrender.com/login",
   cas_version: "3.0",
   renew: false,
   is_dev_mode: false,
