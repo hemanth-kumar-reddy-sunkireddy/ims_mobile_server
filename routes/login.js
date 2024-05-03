@@ -54,7 +54,7 @@ router.get("/", cas.bounce, async (req, res) => {
   res.cookie("token", token, { httpOnly: true });
   res.cookie("name", name, { httpOnly: false });
   res.cookie("email", email, { httpOnly: false });
-  res.redirect(process.env.REDIRECT_URL);
+  res.redirect("https://google.com");
 });
 
 router.get("/logout", (req, res) => {
