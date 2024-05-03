@@ -5,7 +5,7 @@ const Login = require("./routes/login");
 var session = require("express-session");
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process  .PORT || 5000;
 
 app.use(
   session({
