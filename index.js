@@ -27,6 +27,10 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
+app.use("/", function(req, res){
+  res.send("PLEASE GO TO /login")
+})
+
 app.use("/login", Login);
 
 app.use((err, req, res, next) => {
