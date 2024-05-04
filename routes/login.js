@@ -24,8 +24,11 @@ router.get("/", cas.bounce, async (req, res) => {
   console.log("ROLL NUMBER: ", req.session.cas_userinfo.rollno);
   console.log("FIRST NAME: ", req.session.cas_userinfo.firstname);
   console.log("LAST NAME: ", req.session.cas_userinfo.lastname);
+  res.redirect(process.env.REDIRECT_URL + `?name=${req.session.cas_userinfo.firstname}&email=${req.session.cas_user}`);
+
 
   if (ticket) {
+    res.redirect(process.env.REDIRECT_URL + `?name=${req.session.cas_userinfo.firstname}&email=${req.session.cas_user}`);
     console.log("TICKET: ", ticket);
     cas.validate(ticket, function (err, status, username, extended) {
       if (err) {
@@ -42,7 +45,7 @@ router.get("/", cas.bounce, async (req, res) => {
             JSON.stringify(extended)
         );
         console.log("STATUS", status);
-
+        res.redirect(process.env.REDIRECT_URL + `?name=${req.session.cas_userinfo.firstname}&email=${req.session.cas_user}`);
       }
     });
   }
@@ -87,6 +90,7 @@ router.get("/validate", (req, res) => {
     name: name,
     email: email,
   });
+  res.redirect(process.env.REDIRECT_URL + `?name=${name}&email=${email}`);
 });
 
 module.exports = router;
