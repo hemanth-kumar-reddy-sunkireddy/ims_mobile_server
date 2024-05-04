@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 
 
 var cas = new CASAuthentication({
-  cas_url: "https://login.iiit.ac.in/cas",
-  service_url: "https://test-node-js-deploy.onrender.com/login",
+  cas_url: process.env.CAS_SERVER_URL,
+  service_url: process.env.SERVICE_URL,
   cas_version: "3.0",
   renew: false,
   is_dev_mode: false,
@@ -15,13 +15,18 @@ var cas = new CASAuthentication({
   session_name: "cas_user",
   session_info: "cas_userinfo",
   destroy_session: false,
-  return_to: "https://google.com",
+  return_to: process.env.REDIRECT_URL,
 });
 
 router.get("/", cas.bounce, async (req, res) => {
   const ticket = req.query.ticket;
+  console.log("USER NAME: ", req.session.cas_user);
+  console.log("ROLL NUMBER: ", req.session.cas_userinfo.rollno);
+  console.log("FIRST NAME: ", req.session.cas_userinfo.firstname);
+  console.log("LAST NAME: ", req.session.cas_userinfo.lastname);
 
   if (ticket) {
+    console.log("TICKET: ", ticket);
     cas.validate(ticket, function (err, status, username, extended) {
       if (err) {
         res.status(500);
@@ -36,6 +41,8 @@ router.get("/", cas.bounce, async (req, res) => {
             " with extended attributes: " +
             JSON.stringify(extended)
         );
+        console.log("STATUS", status);
+
       }
     });
   }
@@ -49,22 +56,23 @@ router.get("/", cas.bounce, async (req, res) => {
     name: name,
   };
 
-  const token = jwt.sign(payload, "qwertyuhjjdfghjkl");
+  const token = jwt.sign(payload, process.env.SECRET_KEY);
 
   res.cookie("token", token, { httpOnly: true });
   res.cookie("name", name, { httpOnly: false });
   res.cookie("email", email, { httpOnly: false });
-  res.redirect("https://google.com");
+  res.redirect(process.env.REDIRECT_URL + `?name=${name}&email=${email}`);
 });
 
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.clearCookie("name");
   res.clearCookie("email");
-  res.redirect("https://login.iiit.ac.in/cas" + "/logout");
+  res.redirect(process.env.CAS_SERVER_URL + "/logout");
 });
 
 router.get("/validate", (req, res) => {
+  console.log("ANY");
   const token = req.cookies.token;
   const name = req.cookies.name;
   const email = req.cookies.email;
